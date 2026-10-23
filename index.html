@@ -2,7 +2,9 @@
 <title>El ciclo del agua en mi casa · Agenda Ambiental UASLP</title><link rel="stylesheet" href="css/estilos.css"><style>.a-canvas{touch-action:none}.mindar-ui-overlay{pointer-events:none}#dbg{pointer-events:none}
 #barraAR{position:fixed;left:0;right:0;bottom:22px;z-index:26;display:none;gap:8px;justify-content:center;padding:0 8px;pointer-events:auto}
 #barraAR button{min-height:56px;min-width:56px;flex:1;font-size:16px;margin:0;border-radius:28px;background:rgba(0,59,113,.9);border:2px solid #5AE0F0}
-#barraAR button#bExp{background:#E66A2C}</style>
+#barraAR button#bExp{background:#E66A2C}
+#bModo{position:fixed;top:48px;left:8px;z-index:26;min-width:56px;min-height:56px;border-radius:28px;margin:0;padding:0 16px;
+ background:rgba(0,59,113,.55);border:2px solid rgba(90,224,240,.9);box-shadow:0 0 14px rgba(90,224,240,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-size:15px}</style>
 <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 <script src="js/experiencia.js"></script>
@@ -15,11 +17,12 @@ AFRAME.registerComponent('fix-raycast-mindar',{tick(){const c=this.el.sceneEl.ca
 <p class="aviso">Contacto Agenda Ambiental UASLP: ext. 7200 y 7210</p></div>
 <div class="barra"><span>El ciclo del agua en mi casa</span><button style="padding:4px 10px;margin:0" onclick="panelInfo()">ℹ</button></div>
 <div id="panel" class="panel oculto"></div>
+<button id="bModo">Modo: Auto</button>
 <div id="barraAR"><button id="bExp">Ver componentes</button><button id="bSig">Siguiente</button><button id="bMenu">Menú</button></div>
 <a-scene id="escena" mindar-image="autoStart: false; uiScanning: yes" color-space="sRGB" renderer="colorManagement: true; antialias: true" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
  <a-entity light="type: ambient; intensity: 0.9"></a-entity><a-entity light="type: directional; intensity: 0.8" position="0.5 1 1"></a-entity>
  <a-camera fix-raycast-mindar position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse" raycaster="objects: .clicable; far: 100000; interval: 0"></a-camera>
- <a-entity mindar-image-target="targetIndex: 0"><a-entity experiencia="tamModelo: 0.9" position="0 0.3 0.4" scale="2 2 2"></a-entity></a-entity></a-scene>
+ <a-entity mindar-image-target="targetIndex: 0"><a-entity id="orient"><a-entity experiencia="tamModelo: 0.9" position="0 0.3 0.4" scale="2 2 2"></a-entity></a-entity></a-entity></a-scene>
 <script src="js/app.js"></script>
 <script>
 setTimeout(()=>{$('#splash').classList.add('oculto');$('#intro').classList.remove('oculto')},1500);
@@ -30,6 +33,15 @@ const dbg=document.createElement('div');dbg.id='dbg';dbg.style.cssText='position
 if(new URLSearchParams(location.search).get('debug')!=='0')document.body.appendChild(dbg);
 const estado=t=>{dbg.textContent='Estado: '+t;console.log('[AR] '+t);};estado('listo, toca Iniciar');
 const tgt=document.querySelector('[mindar-image-target]');
+// Orientación del cartel: Pared / Mesa / Auto (guardado en localStorage)
+const MODOS=['auto','pared','mesa'];let modo=localStorage.getItem('modoCartel')||'auto',beta=null,modoAuto='pared';
+addEventListener('deviceorientation',e=>{if(e.beta!=null)beta=e.beta;});
+function aplicarModo(){const m=modo==='auto'?modoAuto:modo;document.querySelector('#orient').object3D.rotation.x=m==='mesa'?Math.PI/2:0;
+ $('#bModo').textContent='Modo: '+(modo==='auto'?'Auto ('+(m==='mesa'?'Mesa':'Pared')+')':(m==='mesa'?'Mesa':'Pared'));}
+$('#bModo').onclick=()=>{modo=MODOS[(MODOS.indexOf(modo)+1)%3];localStorage.setItem('modoCartel',modo);aplicarModo();};
+// Auto: teléfono casi vertical (beta>50°) = cartel en pared; apuntando hacia abajo = cartel en mesa
+tgt.addEventListener('targetFound',()=>{if(beta!=null)modoAuto=Math.abs(beta)>50?'pared':'mesa';aplicarModo();});
+setTimeout(aplicarModo,0);
 // Barra 2D de respaldo (botones HTML ≥56 px) con las mismas acciones que los botones 3D
 const EX=()=>document.querySelector('[experiencia]').components.experiencia;
 $('#bExp').onclick=()=>EX().explotar(!EX().explotado);$('#bSig').onclick=()=>EX().abrir(EX().e.id%8+1);$('#bMenu').onclick=()=>EX().cerrar();
@@ -40,6 +52,7 @@ sc.addEventListener('arReady',()=>estado('cámara OK · buscando marcador'));
 sc.addEventListener('arError',ev=>estado('error: no se pudo iniciar la cámara/RA'));
 $('#bIniciar').onclick=async()=>{ // el gesto del usuario dispara el permiso de cámara (requerido en iOS)
   $('#intro').classList.add('oculto');estado('cargando marcador…');
+  try{if(window.DeviceOrientationEvent&&DeviceOrientationEvent.requestPermission)DeviceOrientationEvent.requestPermission().catch(()=>{});}catch(e){}
   try{
     if(!window.isSecureContext)throw new Error('se requiere HTTPS');
     const t=await (await fetch('targets/cartel.mind.b64',{cache:'no-store'})).text();
