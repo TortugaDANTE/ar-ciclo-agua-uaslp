@@ -21,15 +21,15 @@ AFRAME.registerComponent('mirar-camara',{tick(){const cam=this.el.sceneEl.camera
  const o=this.el.object3D,par=o.parent;if(!par)return;const q=new (T().Quaternion)();par.getWorldQuaternion(q);o.lookAt(p);}});
 
 AFRAME.registerComponent('experiencia',{
- schema:{escala:{default:1},tamModelo:{default:0.36}},
+ schema:{escala:{default:1},tamModelo:{default:0.36},radio:{default:0.34},lift:{default:0},sepEtq:{default:0},estZ:{default:0.32}},
  async init(){
   this.C=await (await fetch('data/contenido.json')).json();
   const raiz=this.el; this.raiz=raiz; this.t=0;
   // --- menú anular ---
-  const menu=ent(raiz); menu.object3D.position.set(0,0,0.12); this.menu=menu;
+  const menu=ent(raiz); menu.object3D.position.set(0,0,0.12+this.data.lift); this.menu=menu;
   const th=T();
-  const toro=new th.Mesh(new th.TorusGeometry(0.34,0.006,12,96),new th.MeshBasicMaterial({color:COL.cian,transparent:true,opacity:.75}));
-  const halo=new th.Mesh(new th.TorusGeometry(0.34,0.035,12,96),new th.MeshBasicMaterial({color:COL.cian,transparent:true,opacity:.12,depthWrite:false}));
+  const toro=new th.Mesh(new th.TorusGeometry(this.data.radio,0.006,12,96),new th.MeshBasicMaterial({color:COL.cian,transparent:true,opacity:.75}));
+  const halo=new th.Mesh(new th.TorusGeometry(this.data.radio,0.035,12,96),new th.MeshBasicMaterial({color:COL.cian,transparent:true,opacity:.12,depthWrite:false}));
   const orb=new th.Mesh(new th.RingGeometry(0.2,0.205,96),new th.MeshBasicMaterial({color:COL.agua,transparent:true,opacity:.5,side:th.DoubleSide}));
   this.anillo=ent(menu); this.anillo.object3D.add(toro,halo,orb);
   const tit=lienzo(1024,200);{const c=tit.getContext('2d');vidrio(c,1024,200,90);c.fillStyle='#fff';c.font=`800 64px ${FONT}`;c.textAlign='center';c.fillText('El ciclo del agua',512,92);c.font=`600 42px ${FONT}`;c.fillStyle=COL.cian;c.fillText('en mi casa · toca una estación',512,155);}
@@ -43,12 +43,12 @@ AFRAME.registerComponent('experiencia',{
    const im=await cargarImg(e.icono);if(im)c.drawImage(im,68,58,120,120);
    c.beginPath();c.arc(206,40,26,0,7);c.fillStyle=COL.naranja;c.fill();c.fillStyle='#fff';c.font=`800 30px ${FONT}`;c.textAlign='center';c.fillText(e.id,206,51);
    c.font=`700 40px ${FONT}`;c.fillStyle='#fff';c.shadowColor='#000';c.shadowBlur=8;c.fillText(e.corto,128,300);
-   const piv=ent(giro);piv.object3D.position.set(Math.cos(a)*0.34,Math.sin(a)*0.34,0);
+   const piv=ent(giro);piv.object3D.position.set(Math.cos(a)*this.data.radio,Math.sin(a)*this.data.radio,0);
    const n=ent(piv,plano(cv,0.24),'clicable');
    const hit=new th.Mesh(new th.CircleGeometry(0.17,24),new th.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));hit.position.z=-0.002;n.object3D.add(hit); // zona táctil invisible más granden.setAttribute('mirar-camara','');n.dataset.id=e.id;
    n.addEventListener('click',()=>this.abrir(e.id));this.nodos.push({piv,n,fase:Math.random()*6});}
   // --- escena de estación ---
-  this.est=ent(raiz);this.est.object3D.position.set(0,0,0.32);this.est.object3D.visible=false;
+  this.est=ent(raiz);this.est.object3D.position.set(0,0,this.data.estZ+this.data.lift);this.est.object3D.visible=false;
   this.giroM=ent(this.est);this.yM=0.26+(this.data.tamModelo-0.36)*0.25;this.giroM.object3D.position.y=this.yM;this.modelo=document.createElement('a-entity');this.modelo.classList.add('clicable');this.giroM.appendChild(this.modelo);
   this.etq=ent(this.est);this.lineas=new th.Group();this.est.object3D.add(this.lineas);
   this.card=ent(this.est);this.card.object3D.position.set(0,-0.3,0.02);this.card.setAttribute('mirar-camara','');
@@ -88,7 +88,7 @@ AFRAME.registerComponent('experiencia',{
   const n=this.partes.length;this.partes.forEach((q,i)=>{const cv=lienzo(512,96),c=cv.getContext('2d');rr(c,4,4,504,88,44);c.fillStyle='rgba(0,59,113,.8)';c.fill();
    c.lineWidth=3;c.strokeStyle='rgba(90,224,240,.9)';c.stroke();c.beginPath();c.arc(48,48,14,0,7);c.fillStyle=COL.naranja;c.fill();
    c.fillStyle='#fff';c.font=`700 38px ${FONT}`;c.fillText(q.p.nombre.slice(0,22),76,61);
-   const m=plano(cv,0.16);const tm=this.data.tamModelo,y=this.yM+tm*0.45-i*(tm*0.85/Math.max(1,n-1));m.position.set(-Math.max(0.3,tm*0.5+0.1),y,0.08);this.etq.object3D.add(m);this.etqs.push(m);});
+   const m=plano(cv,0.16);const tm=this.data.tamModelo,y=this.yM+tm*0.45-i*(tm*0.85/Math.max(1,n-1));m.position.set(-Math.max(0.3,tm*0.5+0.1)-this.data.sepEtq,y,0.08+this.data.lift*0.25);this.etq.object3D.add(m);this.etqs.push(m);});
   this.etq.object3D.visible=false;},
  actualizarLineas(){const th=T();while(this.lineas.children.length){const l=this.lineas.children.pop();l.geometry.dispose();}
   if(!this.etq.object3D.visible||!this.etqs)return;const inv=new th.Matrix4().copy(this.est.object3D.matrixWorld).invert();
