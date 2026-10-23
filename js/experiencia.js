@@ -49,18 +49,22 @@ AFRAME.registerComponent('experiencia',{
    n.addEventListener('click',()=>this.abrir(e.id));this.nodos.push({piv,n,fase:Math.random()*6});}
   // --- escena de estación ---
   this.est=ent(raiz);this.est.object3D.position.set(0,0,0.32);this.est.object3D.visible=false;
-  this.giroM=ent(this.est);this.yM=0.2+(this.data.tamModelo-0.36)*0.55;this.giroM.object3D.position.y=this.yM;this.modelo=document.createElement('a-entity');this.modelo.classList.add('clicable');this.giroM.appendChild(this.modelo);
+  this.giroM=ent(this.est);this.yM=0.26+(this.data.tamModelo-0.36)*0.55;this.giroM.object3D.position.y=this.yM;this.modelo=document.createElement('a-entity');this.modelo.classList.add('clicable');this.giroM.appendChild(this.modelo);
   this.etq=ent(this.est);this.lineas=new th.Group();this.est.object3D.add(this.lineas);
   this.card=ent(this.est);this.card.object3D.position.set(0,-0.3,0.02);this.card.setAttribute('mirar-camara','');
   this.botones=ent(this.est);this.botones.object3D.position.set(0,-0.6,0.04);this.botones.setAttribute('mirar-camara','');
   this.modelo.addEventListener('model-loaded',()=>this.preparar());
-  this.modelo.addEventListener('click',ev=>{const o=ev.detail.intersection&&ev.detail.intersection.object;if(!o)return;let x=o;while(x&&!(x.name||'').startsWith('part_'))x=x.parent;if(x)this.parteInfo(x.name);});
+  this.modelo.addEventListener('click',ev=>{ // recorre todas las intersecciones: el vidrio decorativo no bloquea las piezas
+   const rc=this.el.sceneEl.querySelector('[raycaster]');const lista=(rc&&rc.components.raycaster.intersections)||[];
+   const cand=[ev.detail.intersection,...lista].filter(Boolean);
+   for(const it of cand){let x=it.object;while(x&&!(x.name||'').startsWith('part_'))x=x.parent;if(x){const base=this.partes&&this.partes.find(q=>x.name===q.p.mesh||x.name.startsWith(q.p.mesh+'_'));if(base){this.parteInfo(base.p.mesh);return;}}}});
   this.gestos(); this.listo=true; this.el.emit('experiencia-lista');
  },
  tick(t,dt){if(!this.listo)return;this.t+=dt/1000;
   if(this.giro)this.giro.object3D.rotation.z=this.t*0.12;
   this.nodos.forEach(o=>o.piv.object3D.position.z=Math.sin(this.t*1.4+o.fase)*0.015);
   if(this.anillo)this.anillo.object3D.children[1].material.opacity=.1+.06*Math.sin(this.t*2);
+  if(this.zoomT)for(const [o,v] of this.zoomT){const k=o.scale.x+(v-o.scale.x)*Math.min(1,dt/90);o.scale.setScalar(k);}
   if(this.est.object3D.visible){if(!this.arrastrando)this.giroM.object3D.rotation.y+=dt/1000*0.35;this.giroM.object3D.position.y=this.yM+Math.sin(this.t*1.2)*0.01;this.actualizarLineas();}},
  abrir(id){const e=this.C.estaciones[id-1];this.e=e;this.explotado=false;this.parteSel=null;
   anim(450,k=>this.menu.object3D.scale.setScalar(Math.max(.001,1-k)),()=>this.menu.object3D.visible=false);
@@ -69,7 +73,7 @@ AFRAME.registerComponent('experiencia',{
   this.est.object3D.visible=true;this.est.object3D.scale.setScalar(.01);anim(600,k=>this.est.object3D.scale.setScalar(Math.max(.01,k)));
   this.dibujarCard();this.dibujarBotones();},
  preparar(){const th=T(),o=this.modelo.getObject3D('mesh');if(!o)return;const sc0=this.est.object3D.scale.x,r0=this.giroM.object3D.rotation.y;this.est.object3D.scale.setScalar(1);this.giroM.object3D.rotation.y=0;this.el.object3D.updateMatrixWorld(true);const ws=this.el.object3D.getWorldScale(new th.Vector3()).x;
-  o.traverse(m=>{if(m.isMesh){m.material=new th.MeshStandardMaterial({vertexColors:true,roughness:.85,metalness:0});}});
+  o.traverse(m=>{if(m.isMesh&&!(m.material&&m.material.transparent)){m.material=new th.MeshStandardMaterial({vertexColors:true,roughness:.85,metalness:0});}});
   const box=new th.Box3().setFromObject(o),s=box.getSize(new th.Vector3()),c=box.getCenter(new th.Vector3());
   const k=this.data.tamModelo*ws/Math.max(s.x,s.y,s.z);o.scale.setScalar(k);o.position.set(-c.x*k,-c.y*k,-c.z*k);
   this.partes=[];const cen=new th.Vector3();
@@ -108,13 +112,18 @@ AFRAME.registerComponent('experiencia',{
    c.lineWidth=3;c.strokeStyle='rgba(90,224,240,.9)';c.stroke();c.fillStyle='#fff';c.font=`700 40px ${FONT}`;c.textAlign='center';c.fillText(t,210,70);
    const b=ent(this.botones,plano(cv,0.16),'clicable');{const z=new th.Mesh(new th.PlaneGeometry(0.17,0.07),new th.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));z.position.z=-0.002;b.object3D.add(z);}b.object3D.position.x=(i-1)*0.175;b.addEventListener('click',fn);});},
  cerrar(){this.menu.object3D.visible=true;anim(450,k=>{this.est.object3D.scale.setScalar(Math.max(.01,1-k));this.menu.object3D.scale.setScalar(Math.max(.001,k));},()=>this.est.object3D.visible=false);},
- gestos(){const cv=this.el.sceneEl.canvas||document.body;let p0=null,d0=0,s0=1;
+ zoom(o,v){if(!this.zoomT)this.zoomT=new Map();this.zoomT.set(o,Math.min(2.5,Math.max(.5,v)));},
+ gestos(){this.zoomT=new Map();const cv=this.el.sceneEl.canvas||document.body;let p0=null,d0=0,s0=1;
   const el=document.body;el.addEventListener('touchstart',ev=>{if(ev.touches.length==2){d0=Math.hypot(ev.touches[0].clientX-ev.touches[1].clientX,ev.touches[0].clientY-ev.touches[1].clientY);this.objZoom=((ev.touches[0].clientY+ev.touches[1].clientY)/2>innerHeight*0.6)?this.card.object3D:this.giroM.object3D;s0=this.objZoom.scale.x;}else p0=ev.touches[0].clientX;},{passive:true});
-  el.addEventListener('touchmove',ev=>{if(!this.est.object3D.visible)return;if(ev.touches.length==2&&d0){const d=Math.hypot(ev.touches[0].clientX-ev.touches[1].clientX,ev.touches[0].clientY-ev.touches[1].clientY);this.objZoom.scale.setScalar(Math.min(this.objZoom===this.card.object3D?2:2.5,Math.max(.5,s0*d/d0)));}
+  el.addEventListener('touchmove',ev=>{if(!this.est.object3D.visible)return;if(ev.touches.length==2&&d0){const d=Math.hypot(ev.touches[0].clientX-ev.touches[1].clientX,ev.touches[0].clientY-ev.touches[1].clientY);this.zoom(this.objZoom,s0*d/d0);}
    else if(p0!=null&&ev.touches.length==1&&!d0){this.arrastrando=true;const x=ev.touches[0].clientX;this.giroM.object3D.rotation.y+=(x-p0)*0.01;p0=x;}},{passive:true});
   el.addEventListener('touchend',()=>{p0=null;d0=0;this.arrastrando=false;});
   let m0=null;el.addEventListener('mousedown',e=>m0=e.clientX);el.addEventListener('mousemove',e=>{if(m0!=null&&e.buttons&&this.est.object3D.visible){this.arrastrando=true;this.giroM.object3D.rotation.y+=(e.clientX-m0)*0.01;m0=e.clientX;}});
   el.addEventListener('mouseup',()=>{m0=null;this.arrastrando=false;});
-  el.addEventListener('wheel',e=>{if(this.est.object3D.visible)this.giroM.object3D.scale.setScalar(Math.min(2.5,Math.max(.5,this.giroM.object3D.scale.x*(e.deltaY<0?1.1:.9))));});}
+  el.addEventListener('wheel',e=>{e.preventDefault();if(!this.est.object3D.visible)return;
+   const o=(e.clientY>innerHeight*0.6)?this.card.object3D:this.giroM.object3D;const f=Math.exp(-e.deltaY*(e.ctrlKey?0.01:0.0015));this.zoom(o,(this.zoomT.get(o)||o.scale.x)*f);},{passive:false});
+  // evitar zoom de página del navegador (pellizco en trackpad/Safari)
+  ['gesturestart','gesturechange'].forEach(t=>document.addEventListener(t,e=>e.preventDefault()));
+  document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});}
 });
 })();
