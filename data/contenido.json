@@ -28,7 +28,7 @@
     {
      "nombre": "Malla/filtro de hojas",
      "texto": "Retiene hojas y basura gruesa.",
-     "mesh": "part_malla/filtro"
+     "mesh": "part_malla"
     },
     {
      "nombre": "Separador de primeras lluvias",
@@ -63,8 +63,10 @@
     1.05,
     0
    ],
-   "modelo": "models/01.glb",
-   "modelo_disponible": false
+   "modelo": "models/01.gltf",
+   "modelo_disponible": true,
+   "corto": "Lluvia",
+   "icono": "assets/iconos/01.svg"
   },
   {
    "id": 2,
@@ -80,7 +82,7 @@
     {
      "nombre": "Capa biológica",
      "texto": "Película superficial que atrapa microbios.",
-     "mesh": "part_capa"
+     "mesh": "part_capa_biologica"
     },
     {
      "nombre": "Arena fina",
@@ -90,12 +92,12 @@
     {
      "nombre": "Grava fina",
      "texto": "Soporta la arena.",
-     "mesh": "part_grava"
+     "mesh": "part_grava_fina"
     },
     {
      "nombre": "Grava gruesa",
      "texto": "Drenaje en el fondo.",
-     "mesh": "part_grava"
+     "mesh": "part_grava_gruesa"
     },
     {
      "nombre": "Salida",
@@ -115,8 +117,10 @@
     0.35,
     0
    ],
-   "modelo": "models/02.glb",
-   "modelo_disponible": false
+   "modelo": "models/02.gltf",
+   "modelo_disponible": true,
+   "corto": "Filtro",
+   "icono": "assets/iconos/02.svg"
   },
   {
    "id": 3,
@@ -157,8 +161,10 @@
     0.95,
     0
    ],
-   "modelo": "models/03.glb",
-   "modelo_disponible": false
+   "modelo": "models/03.gltf",
+   "modelo_disponible": true,
+   "corto": "SODIS",
+   "icono": "assets/iconos/03.svg"
   },
   {
    "id": 4,
@@ -184,7 +190,7 @@
     {
      "nombre": "Válvula de cierre",
      "texto": "Corta el agua mientras te enjabonas.",
-     "mesh": "part_válvula"
+     "mesh": "part_valvula"
     }
    ],
    "datos": [
@@ -199,8 +205,10 @@
     0.55,
     0
    ],
-   "modelo": "models/04.glb",
-   "modelo_disponible": false
+   "modelo": "models/04.gltf",
+   "modelo_disponible": true,
+   "corto": "Ahorro",
+   "icono": "assets/iconos/04.svg"
   },
   {
    "id": 5,
@@ -216,7 +224,7 @@
     {
      "nombre": "Desagüe separado",
      "texto": "Conduce el agua gris fuera del drenaje.",
-     "mesh": "part_desagüe"
+     "mesh": "part_desague"
     },
     {
      "nombre": "Trampa de sólidos/grasas",
@@ -226,12 +234,12 @@
     {
      "nombre": "Depósito de agua gris",
      "texto": "Almacena para reúso inmediato.",
-     "mesh": "part_depósito"
+     "mesh": "part_deposito"
     },
     {
      "nombre": "Salida a reúso",
      "texto": "Hacia riego o biofiltro.",
-     "mesh": "part_salida"
+     "mesh": "part_salida_reuso"
     }
    ],
    "datos": [
@@ -244,8 +252,10 @@
     0.45,
     0
    ],
-   "modelo": "models/05.glb",
-   "modelo_disponible": false
+   "modelo": "models/05.gltf",
+   "modelo_disponible": true,
+   "corto": "Lavadero",
+   "icono": "assets/iconos/05.svg"
   },
   {
    "id": 6,
@@ -261,7 +271,7 @@
     {
      "nombre": "Trampa de grasas",
      "texto": "Pretratamiento.",
-     "mesh": "part_trampa"
+     "mesh": "part_trampa_grasas"
     },
     {
      "nombre": "Lecho de grava",
@@ -271,17 +281,17 @@
     {
      "nombre": "Plantas acuáticas",
      "texto": "Raíces que alojan microbios depuradores.",
-     "mesh": "part_plantas"
+     "mesh": "part_impermeabilizacion"
     },
     {
      "nombre": "Impermeabilización",
      "texto": "Evita infiltrar agua sin tratar.",
-     "mesh": "part_impermeabilización"
+     "mesh": "part_plantas"
     },
     {
      "nombre": "Salida tratada",
      "texto": "Agua para riego.",
-     "mesh": "part_salida"
+     "mesh": "part_salida_tratada"
     }
    ],
    "datos": [
@@ -295,8 +305,10 @@
     0.25,
     0
    ],
-   "modelo": "models/06.glb",
-   "modelo_disponible": false
+   "modelo": "models/06.gltf",
+   "modelo_disponible": true,
+   "corto": "Biofiltro",
+   "icono": "assets/iconos/06.svg"
   },
   {
    "id": 7,
@@ -312,12 +324,12 @@
     {
      "nombre": "Cámara de heces",
      "texto": "Almacena y seca.",
-     "mesh": "part_cámara"
+     "mesh": "part_camara"
     },
     {
      "nombre": "Material secante",
      "texto": "Cal, ceniza o aserrín.",
-     "mesh": "part_material"
+     "mesh": "part_material_secante"
     },
     {
      "nombre": "Ducto de ventilación",
@@ -327,7 +339,7 @@
     {
      "nombre": "Contenedor de orina",
      "texto": "Orina para fertilizante diluido.",
-     "mesh": "part_contenedor"
+     "mesh": "part_contenedor_orina"
     }
    ],
    "datos": [
@@ -342,8 +354,10 @@
     0.15,
     0
    ],
-   "modelo": "models/07.glb",
-   "modelo_disponible": false
+   "modelo": "models/07.gltf",
+   "modelo_disponible": true,
+   "corto": "Seco",
+   "icono": "assets/iconos/07.svg"
   },
   {
    "id": 8,
@@ -354,17 +368,17 @@
     {
      "nombre": "Depósito elevado",
      "texto": "Da presión por gravedad.",
-     "mesh": "part_depósito"
+     "mesh": "part_deposito_elevado"
     },
     {
      "nombre": "Filtro de malla",
      "texto": "Evita taponamientos.",
-     "mesh": "part_filtro"
+     "mesh": "part_filtro_malla"
     },
     {
      "nombre": "Manguera/cintilla",
      "texto": "Distribuye el agua.",
-     "mesh": "part_manguera/cintilla"
+     "mesh": "part_manguera"
     },
     {
      "nombre": "Gotero",
@@ -393,8 +407,11 @@
     0.05,
     0
    ],
-   "modelo": "models/08.glb",
-   "modelo_disponible": false
+   "modelo": "models/08.gltf",
+   "modelo_disponible": true,
+   "corto": "Riego",
+   "icono": "assets/iconos/08.svg"
   }
- ]
+ ],
+ "casa": "models/casa.gltf"
 }
