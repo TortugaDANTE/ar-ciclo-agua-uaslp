@@ -21,7 +21,7 @@ AFRAME.registerComponent('mirar-camara',{tick(){const cam=this.el.sceneEl.camera
  const o=this.el.object3D,par=o.parent;if(!par)return;const q=new (T().Quaternion)();par.getWorldQuaternion(q);o.lookAt(p);}});
 
 AFRAME.registerComponent('experiencia',{
- schema:{escala:{default:1},tamModelo:{default:0.36},radio:{default:0.34},lift:{default:0},sepEtq:{default:0},estZ:{default:0.32}},
+ schema:{escala:{default:1},tamModelo:{default:0.36},radio:{default:0.34},lift:{default:0},sepEtq:{default:0},estZ:{default:0.32},cardY:{default:-0.3},botones3D:{default:true},altoMax:{default:0},etqMax:{default:0},yExtra:{default:0}},
  async init(){
   this.C=await (await fetch('data/contenido.json')).json();
   const raiz=this.el; this.raiz=raiz; this.t=0;
@@ -49,10 +49,10 @@ AFRAME.registerComponent('experiencia',{
    n.addEventListener('click',()=>this.abrir(e.id));this.nodos.push({piv,n,fase:Math.random()*6});}
   // --- escena de estación ---
   this.est=ent(raiz);this.est.object3D.position.set(0,0,this.data.estZ+this.data.lift);this.est.object3D.visible=false;
-  this.giroM=ent(this.est);this.yM=0.26+(this.data.tamModelo-0.36)*0.25;this.giroM.object3D.position.y=this.yM;this.modelo=document.createElement('a-entity');this.modelo.classList.add('clicable');this.giroM.appendChild(this.modelo);
+  this.giroM=ent(this.est);this.yM=0.26+(this.data.tamModelo-0.36)*0.25+this.data.yExtra;this.giroM.object3D.position.y=this.yM;this.modelo=document.createElement('a-entity');this.modelo.classList.add('clicable');this.giroM.appendChild(this.modelo);
   this.etq=ent(this.est);this.lineas=new th.Group();this.est.object3D.add(this.lineas);
-  this.card=ent(this.est);this.card.object3D.position.set(0,-0.3,0.02);this.card.setAttribute('mirar-camara','');
-  this.botones=ent(this.est);this.botones.object3D.position.set(0,-0.6,0.04);this.botones.setAttribute('mirar-camara','');
+  this.card=ent(this.est);this.card.object3D.position.set(0,this.data.cardY,0.02);this.card.setAttribute('mirar-camara','');
+  this.botones=ent(this.est);this.botones.object3D.position.set(0,-0.6,0.04);this.botones.object3D.visible=this.data.botones3D;this.botones.setAttribute('mirar-camara','');
   this.modelo.addEventListener('model-loaded',()=>this.preparar());
   this.modelo.addEventListener('click',ev=>{ // recorre todas las intersecciones: el vidrio decorativo no bloquea las piezas
    const rc=this.el.sceneEl.querySelector('[raycaster]');const lista=(rc&&rc.components.raycaster.intersections)||[];
@@ -79,7 +79,7 @@ AFRAME.registerComponent('experiencia',{
   const inv=new th.Matrix4().copy(o.matrixWorld).invert();
   const cajaLocal=obj=>{const bx=new th.Box3();obj.updateMatrixWorld(true);obj.traverse(m=>{if(m.isMesh){m.geometry.computeBoundingBox();bx.union(m.geometry.boundingBox.clone().applyMatrix4(new th.Matrix4().multiplyMatrices(inv,m.matrixWorld)));}});return bx;};
   const box=cajaLocal(o),s=box.getSize(new th.Vector3()),c=box.getCenter(new th.Vector3());
-  const k=this.data.tamModelo/Math.max(s.x,s.y,s.z);o.scale.setScalar(k);o.position.set(-c.x*k,-c.y*k,-c.z*k);
+  let k=this.data.tamModelo/Math.max(s.x,s.y,s.z);if(this.data.altoMax)k=Math.min(k,this.data.altoMax/s.y);this.anchoM=Math.max(s.x,s.z)*k;o.scale.setScalar(k);o.position.set(-c.x*k,-c.y*k,-c.z*k);
   this.partes=[];
   this.e.partes.forEach(p=>{const n=o.getObjectByName(p.mesh);if(!n)return;const dir=cajaLocal(n).getCenter(new th.Vector3()).sub(c);if(dir.length()<1e-4)dir.set(0,1,0);
    this.partes.push({p,n,base:n.position.clone(),dirL:dir.normalize().divideScalar(k)});});
@@ -88,7 +88,7 @@ AFRAME.registerComponent('experiencia',{
   const n=this.partes.length;this.partes.forEach((q,i)=>{const cv=lienzo(512,96),c=cv.getContext('2d');rr(c,4,4,504,88,44);c.fillStyle='rgba(0,59,113,.8)';c.fill();
    c.lineWidth=3;c.strokeStyle='rgba(90,224,240,.9)';c.stroke();c.beginPath();c.arc(48,48,14,0,7);c.fillStyle=COL.naranja;c.fill();
    c.fillStyle='#fff';c.font=`700 38px ${FONT}`;c.fillText(q.p.nombre.slice(0,22),76,61);
-   const m=plano(cv,0.16);const tm=this.data.tamModelo,y=this.yM+tm*0.45-i*(tm*0.85/Math.max(1,n-1));m.position.set(-Math.max(0.3,tm*0.5+0.1)-this.data.sepEtq,y,0.08+this.data.lift*0.25);this.etq.object3D.add(m);this.etqs.push(m);});
+   const m=plano(cv,0.16);const tm=this.data.tamModelo,y=this.yM+tm*0.45-i*(tm*0.85/Math.max(1,n-1));let ex=-Math.max(0.3,tm*0.5+0.1)-this.data.sepEtq;if(this.data.etqMax)ex=Math.max(-this.data.etqMax,-(this.anchoM||tm)*0.5-0.1-this.data.sepEtq);m.position.set(ex,y,0.08+this.data.lift*0.25);this.etq.object3D.add(m);this.etqs.push(m);});
   this.etq.object3D.visible=false;},
  actualizarLineas(){const th=T();while(this.lineas.children.length){const l=this.lineas.children.pop();l.geometry.dispose();}
   if(!this.etq.object3D.visible||!this.etqs)return;const inv=new th.Matrix4().copy(this.est.object3D.matrixWorld).invert();
