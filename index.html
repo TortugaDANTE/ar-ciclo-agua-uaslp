@@ -1,8 +1,13 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>El ciclo del agua en mi casa · Agenda Ambiental UASLP</title><link rel="stylesheet" href="css/estilos.css">
+<title>El ciclo del agua en mi casa · Agenda Ambiental UASLP</title><link rel="stylesheet" href="css/estilos.css"><style>.a-canvas{touch-action:none}.mindar-ui-overlay{pointer-events:none}#dbg{pointer-events:none}
+#barraAR{position:fixed;left:0;right:0;bottom:22px;z-index:26;display:none;gap:8px;justify-content:center;padding:0 8px;pointer-events:auto}
+#barraAR button{min-height:56px;min-width:56px;flex:1;font-size:16px;margin:0;border-radius:28px;background:rgba(0,59,113,.9);border:2px solid #5AE0F0}
+#barraAR button#bExp{background:#E66A2C}</style>
 <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-<script src="js/experiencia.js"></script></head><body>
+<script src="js/experiencia.js"></script>
+<script>/* MindAR fija camera.projectionMatrix pero no su inversa; el raycaster (toques) usa la inversa. */
+AFRAME.registerComponent('fix-raycast-mindar',{tick(){const c=this.el.sceneEl.camera;if(c)c.projectionMatrixInverse.copy(c.projectionMatrix).invert();}});</script></head><body>
 <div id="splash" class="capa"><div class="logos"><img src="assets/logos/logo_uaslp_corner.svg" alt="UASLP"><img src="assets/logos/logo_aa.svg" alt="Agenda Ambiental UASLP"></div></div>
 <div id="intro" class="capa oculto"><h1>El ciclo del agua en mi casa</h1><p id="txtIntro"></p>
 <p><b>Capto → Potabilizo → Uso y ahorro → Trato y reúso → Devuelvo al suelo</b></p>
@@ -10,10 +15,11 @@
 <p class="aviso">Contacto Agenda Ambiental UASLP: ext. 7200 y 7210</p></div>
 <div class="barra"><span>El ciclo del agua en mi casa</span><button style="padding:4px 10px;margin:0" onclick="panelInfo()">ℹ</button></div>
 <div id="panel" class="panel oculto"></div>
+<div id="barraAR"><button id="bExp">Ver componentes</button><button id="bSig">Siguiente</button><button id="bMenu">Menú</button></div>
 <a-scene id="escena" mindar-image="autoStart: false; uiScanning: yes" color-space="sRGB" renderer="colorManagement: true; antialias: true" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
  <a-entity light="type: ambient; intensity: 0.9"></a-entity><a-entity light="type: directional; intensity: 0.8" position="0.5 1 1"></a-entity>
- <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse" raycaster="objects: .clicable"></a-camera>
- <a-entity mindar-image-target="targetIndex: 0"><a-entity experiencia></a-entity></a-entity></a-scene>
+ <a-camera fix-raycast-mindar position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse" raycaster="objects: .clicable; far: 100000; interval: 0"></a-camera>
+ <a-entity mindar-image-target="targetIndex: 0"><a-entity experiencia="tamModelo: 0.9" position="0 0.3 0.4" scale="2 2 2"></a-entity></a-entity></a-scene>
 <script src="js/app.js"></script>
 <script>
 setTimeout(()=>{$('#splash').classList.add('oculto');$('#intro').classList.remove('oculto')},1500);
@@ -24,6 +30,10 @@ const dbg=document.createElement('div');dbg.id='dbg';dbg.style.cssText='position
 if(new URLSearchParams(location.search).get('debug')!=='0')document.body.appendChild(dbg);
 const estado=t=>{dbg.textContent='Estado: '+t;console.log('[AR] '+t);};estado('listo, toca Iniciar');
 const tgt=document.querySelector('[mindar-image-target]');
+// Barra 2D de respaldo (botones HTML ≥56 px) con las mismas acciones que los botones 3D
+const EX=()=>document.querySelector('[experiencia]').components.experiencia;
+$('#bExp').onclick=()=>EX().explotar(!EX().explotado);$('#bSig').onclick=()=>EX().abrir(EX().e.id%8+1);$('#bMenu').onclick=()=>EX().cerrar();
+setInterval(()=>{const ex=EX();if(!ex||!ex.est)return;const on=ex.est.object3D.visible&&window.encontrado;$('#barraAR').style.display=on?'flex':'none';$('#bExp').textContent=ex.explotado?'Unir':'Ver componentes';},300);
 tgt.addEventListener('targetFound',()=>{window.encontrado=true;estado('marcador detectado');});
 tgt.addEventListener('targetLost',()=>estado('buscando marcador'));
 sc.addEventListener('arReady',()=>estado('cámara OK · buscando marcador'));
