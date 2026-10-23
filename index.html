@@ -19,10 +19,29 @@
 setTimeout(()=>{$('#splash').classList.add('oculto');$('#intro').classList.remove('oculto')},1500);
 cargarContenido().then(c=>$('#txtIntro').textContent=c.intro);
 const sc=document.querySelector('#escena');
-$('#bIniciar').onclick=async()=>{$('#intro').classList.add('oculto');
-  try{const t=await (await fetch('targets/cartel.mind.b64')).text();const bin=Uint8Array.from(atob(t.trim()),c=>c.charCodeAt(0));
-    sc.setAttribute('mindar-image','imageTargetSrc',URL.createObjectURL(new Blob([bin])));await new Promise(r=>setTimeout(r,50));await sc.systems['mindar-image-system'].start();}catch(e){location.href='visor.html';return}
-  let ok=false;document.querySelector('[mindar-image-target]').addEventListener('targetFound',()=>ok=true);
-  setTimeout(()=>{if(!ok&&confirm('No se detecta el cartel. ¿Abrir el visor sin cámara?'))location.href='visor.html'},12000);};
-sc.addEventListener('arError',()=>location.href='visor.html');
+// Línea de diagnóstico (ocultar con ?debug=0)
+const dbg=document.createElement('div');dbg.id='dbg';dbg.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:30;background:#0E2240cc;color:#5AE0F0;font:12px monospace;padding:4px 8px';
+if(new URLSearchParams(location.search).get('debug')!=='0')document.body.appendChild(dbg);
+const estado=t=>{dbg.textContent='Estado: '+t;console.log('[AR] '+t);};estado('listo, toca Iniciar');
+const tgt=document.querySelector('[mindar-image-target]');
+tgt.addEventListener('targetFound',()=>{window.encontrado=true;estado('marcador detectado');});
+tgt.addEventListener('targetLost',()=>estado('buscando marcador'));
+sc.addEventListener('arReady',()=>estado('cámara OK · buscando marcador'));
+sc.addEventListener('arError',ev=>estado('error: no se pudo iniciar la cámara/RA'));
+$('#bIniciar').onclick=async()=>{ // el gesto del usuario dispara el permiso de cámara (requerido en iOS)
+  $('#intro').classList.add('oculto');estado('cargando marcador…');
+  try{
+    if(!window.isSecureContext)throw new Error('se requiere HTTPS');
+    const t=await (await fetch('targets/cartel.mind.b64',{cache:'no-store'})).text();
+    const bin=Uint8Array.from(atob(t.trim()),c=>c.charCodeAt(0));
+    const url=URL.createObjectURL(new Blob([bin],{type:'application/octet-stream'}));
+    const sys=sc.systems['mindar-image-system'];
+    // mindar-image solo lee imageTargetSrc en init: configurar el sistema directamente
+    sys.setup({imageTargetSrc:url,maxTrack:1,filterMinCF:0.0001,filterBeta:0.001,missTolerance:10,warmupTolerance:3,showStats:false,uiLoading:'yes',uiScanning:'yes',uiError:'yes'});
+    estado('pidiendo cámara…');await sys.start();
+  }catch(e){estado('error: '+(e&&e.message||e));return;}
+  setTimeout(()=>{if(!window.encontrado)estado('buscando marcador (apunta a la casa del cartel)');
+    const b=document.createElement('button');b.textContent='Ver sin cámara';b.style.cssText='position:fixed;top:44px;right:8px;z-index:25';b.onclick=()=>location.href='visor.html';
+    if(!window.encontrado)document.body.appendChild(b);},12000);
+};
 </script></body></html>
