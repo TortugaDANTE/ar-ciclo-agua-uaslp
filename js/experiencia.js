@@ -49,7 +49,7 @@ AFRAME.registerComponent('experiencia',{
    n.addEventListener('click',()=>this.abrir(e.id));this.nodos.push({piv,n,fase:Math.random()*6});}
   // --- escena de estación ---
   this.est=ent(raiz);this.est.object3D.position.set(0,0,0.32);this.est.object3D.visible=false;
-  this.giroM=ent(this.est);this.yM=0.26+(this.data.tamModelo-0.36)*0.55;this.giroM.object3D.position.y=this.yM;this.modelo=document.createElement('a-entity');this.modelo.classList.add('clicable');this.giroM.appendChild(this.modelo);
+  this.giroM=ent(this.est);this.yM=0.26+(this.data.tamModelo-0.36)*0.25;this.giroM.object3D.position.y=this.yM;this.modelo=document.createElement('a-entity');this.modelo.classList.add('clicable');this.giroM.appendChild(this.modelo);
   this.etq=ent(this.est);this.lineas=new th.Group();this.est.object3D.add(this.lineas);
   this.card=ent(this.est);this.card.object3D.position.set(0,-0.3,0.02);this.card.setAttribute('mirar-camara','');
   this.botones=ent(this.est);this.botones.object3D.position.set(0,-0.6,0.04);this.botones.setAttribute('mirar-camara','');
@@ -72,15 +72,18 @@ AFRAME.registerComponent('experiencia',{
   this.modelo.removeAttribute('gltf-model');this.modelo.setAttribute('gltf-model',e.modelo);
   this.est.object3D.visible=true;this.est.object3D.scale.setScalar(.01);anim(600,k=>this.est.object3D.scale.setScalar(Math.max(.01,k)));
   this.dibujarCard();this.dibujarBotones();},
- preparar(){const th=T(),o=this.modelo.getObject3D('mesh');if(!o)return;const sc0=this.est.object3D.scale.x,r0=this.giroM.object3D.rotation.y;this.est.object3D.scale.setScalar(1);this.giroM.object3D.rotation.y=0;this.el.object3D.updateMatrixWorld(true);const ws=this.el.object3D.getWorldScale(new th.Vector3()).x;
+ preparar(){const th=T(),o=this.modelo.getObject3D('mesh');if(!o)return;
   o.traverse(m=>{if(m.isMesh&&!(m.material&&m.material.transparent)){m.material=new th.MeshStandardMaterial({vertexColors:true,roughness:.85,metalness:0});}});
-  const box=new th.Box3().setFromObject(o),s=box.getSize(new th.Vector3()),c=box.getCenter(new th.Vector3());
-  const k=this.data.tamModelo*ws/Math.max(s.x,s.y,s.z);o.scale.setScalar(k);o.position.set(-c.x*k,-c.y*k,-c.z*k);
-  this.partes=[];const cen=new th.Vector3();
-  this.e.partes.forEach(p=>{const n=o.getObjectByName(p.mesh);if(!n)return;const b=new th.Box3().setFromObject(n);const pc=b.getCenter(new th.Vector3());
-   const dir=pc.clone().sub(new th.Box3().setFromObject(o).getCenter(cen));if(dir.length()<1e-4)dir.set(0,1,0);
+  // Medidas en el espacio LOCAL del modelo (en RA el mundo de MindAR está en píxeles y muy lejos del origen)
+  o.position.set(0,0,0);o.scale.set(1,1,1);o.updateMatrixWorld(true);
+  const inv=new th.Matrix4().copy(o.matrixWorld).invert();
+  const cajaLocal=obj=>{const bx=new th.Box3();obj.updateMatrixWorld(true);obj.traverse(m=>{if(m.isMesh){m.geometry.computeBoundingBox();bx.union(m.geometry.boundingBox.clone().applyMatrix4(new th.Matrix4().multiplyMatrices(inv,m.matrixWorld)));}});return bx;};
+  const box=cajaLocal(o),s=box.getSize(new th.Vector3()),c=box.getCenter(new th.Vector3());
+  const k=this.data.tamModelo/Math.max(s.x,s.y,s.z);o.scale.setScalar(k);o.position.set(-c.x*k,-c.y*k,-c.z*k);
+  this.partes=[];
+  this.e.partes.forEach(p=>{const n=o.getObjectByName(p.mesh);if(!n)return;const dir=cajaLocal(n).getCenter(new th.Vector3()).sub(c);if(dir.length()<1e-4)dir.set(0,1,0);
    this.partes.push({p,n,base:n.position.clone(),dirL:dir.normalize().divideScalar(k)});});
-  this.est.object3D.scale.setScalar(sc0);this.giroM.object3D.rotation.y=r0;this.crearEtiquetas();},
+  this.crearEtiquetas();},
  crearEtiquetas(){while(this.etq.object3D.children.length)this.etq.object3D.remove(this.etq.object3D.children[0]);this.etqs=[];
   const n=this.partes.length;this.partes.forEach((q,i)=>{const cv=lienzo(512,96),c=cv.getContext('2d');rr(c,4,4,504,88,44);c.fillStyle='rgba(0,59,113,.8)';c.fill();
    c.lineWidth=3;c.strokeStyle='rgba(90,224,240,.9)';c.stroke();c.beginPath();c.arc(48,48,14,0,7);c.fillStyle=COL.naranja;c.fill();
