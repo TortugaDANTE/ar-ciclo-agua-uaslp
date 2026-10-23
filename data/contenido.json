@@ -1,0 +1,400 @@
+{
+ "titulo": "El ciclo del agua en mi casa",
+ "intro": "El agua que llega a tu casa recorre un ciclo: la captamos de la lluvia, la hacemos segura para beber, la usamos sin desperdiciar, tratamos la que ya usamos para volver a aprovecharla y finalmente la devolvemos al suelo regando plantas. Toca cada estación para conocer la ecotecnia que lo hace posible.",
+ "fases": [
+  "CAPTO",
+  "POTABILIZO",
+  "USO Y AHORRO",
+  "TRATO Y REÚSO",
+  "DEVUELVO AL SUELO"
+ ],
+ "estaciones": [
+  {
+   "id": 1,
+   "fase": "CAPTO",
+   "nombre": "Captación de agua de lluvia",
+   "num_ecotecnia": 1,
+   "partes": [
+    {
+     "nombre": "Techo",
+     "texto": "Superficie de captación limpia e impermeable.",
+     "mesh": "part_techo"
+    },
+    {
+     "nombre": "Canaletas",
+     "texto": "Conducen el agua del techo a la bajante.",
+     "mesh": "part_canaletas"
+    },
+    {
+     "nombre": "Malla/filtro de hojas",
+     "texto": "Retiene hojas y basura gruesa.",
+     "mesh": "part_malla/filtro"
+    },
+    {
+     "nombre": "Separador de primeras lluvias",
+     "texto": "Desvía el primer lavado del techo, más sucio.",
+     "mesh": "part_separador"
+    },
+    {
+     "nombre": "Bajante",
+     "texto": "Tubo que lleva el agua a la cisterna.",
+     "mesh": "part_bajante"
+    },
+    {
+     "nombre": "Cisterna",
+     "texto": "Almacena el agua cerrada y a la sombra.",
+     "mesh": "part_cisterna"
+    },
+    {
+     "nombre": "Rebosadero",
+     "texto": "Desaloja el excedente sin dañar la casa.",
+     "mesh": "part_rebosadero"
+    }
+   ],
+   "datos": [
+    "Volumen captable ≈ área del techo (m²) × precipitación (mm) × coeficiente de escurrimiento (fuente: CONAGUA, Manual de Agua Potable, Alcantarillado y Saneamiento – MAPAS, libro de captación pluvial).",
+    "Precipitación media anual en San Luis Potosí capital: 514.9 mm (estación 24070 San Luis Potosí OBS, Normal Climatológica 1991–2020, SMN-CONAGUA: smn.conagua.gob.mx/tools/RESOURCES/Normales_Climatologicas/Normales9120/slp/nor9120_24070.txt). Lluvia concentrada jun–sep. Ejemplo: techo de 50 m² × 0.5149 m × 0.8 ≈ 20.6 m³/año (coeficiente 0.8 ilustrativo [POR DEFINIR valor MAPAS]).",
+    "Volumen a desviar en primeras lluvias: [POR DEFINIR – citar MAPAS/IMTA]."
+   ],
+   "funcion": "Recolecta la lluvia del techo y la almacena para uso doméstico.",
+   "ubicacion": "Superior de la casa",
+   "posicion": [
+    0,
+    1.05,
+    0
+   ],
+   "modelo": "models/01.glb",
+   "modelo_disponible": false
+  },
+  {
+   "id": 2,
+   "fase": "POTABILIZO",
+   "nombre": "Filtro purificador de arena y grava",
+   "num_ecotecnia": 2,
+   "partes": [
+    {
+     "nombre": "Tapa difusora",
+     "texto": "Reparte el agua sin remover la arena.",
+     "mesh": "part_tapa"
+    },
+    {
+     "nombre": "Capa biológica",
+     "texto": "Película superficial que atrapa microbios.",
+     "mesh": "part_capa"
+    },
+    {
+     "nombre": "Arena fina",
+     "texto": "Filtra partículas finas.",
+     "mesh": "part_arena"
+    },
+    {
+     "nombre": "Grava fina",
+     "texto": "Soporta la arena.",
+     "mesh": "part_grava"
+    },
+    {
+     "nombre": "Grava gruesa",
+     "texto": "Drenaje en el fondo.",
+     "mesh": "part_grava"
+    },
+    {
+     "nombre": "Salida",
+     "texto": "Tubo de agua filtrada.",
+     "mesh": "part_salida"
+    }
+   ],
+   "datos": [
+    "La filtración no garantiza agua potable; se recomienda desinfectar después (OMS, Guías para la calidad del agua de consumo humano, 4ª ed.).",
+    "Diseño de biofiltro de arena: CAWST, Biosand Filter Construction Manual (libre).",
+    "Remoción típica: [POR DEFINIR – citar CAWST/OMS con cifra exacta]."
+   ],
+   "funcion": "Retira sólidos y parte de microorganismos haciendo pasar el agua por capas de arena y grava (filtro lento/bioarena).",
+   "ubicacion": "Junto a la cisterna/cocina",
+   "posicion": [
+    -0.3,
+    0.35,
+    0
+   ],
+   "modelo": "models/02.glb",
+   "modelo_disponible": false
+  },
+  {
+   "id": 3,
+   "fase": "POTABILIZO",
+   "nombre": "Desinfección solar SODIS",
+   "num_ecotecnia": 3,
+   "partes": [
+    {
+     "nombre": "Botella PET transparente",
+     "texto": "Recipiente ≤2 L que deja pasar el UV.",
+     "mesh": "part_botella"
+    },
+    {
+     "nombre": "Agua clara",
+     "texto": "Turbidez baja para que el sol penetre.",
+     "mesh": "part_agua"
+    },
+    {
+     "nombre": "Superficie reflejante",
+     "texto": "Lámina o techo que aumenta la radiación.",
+     "mesh": "part_superficie"
+    },
+    {
+     "nombre": "Sol",
+     "texto": "6 h de sol directo.",
+     "mesh": "part_sol"
+    }
+   ],
+   "datos": [
+    "Exponer al menos 6 h de sol directo (un día completo recomendado) si el cielo está nublado menos del 50%; 2 días consecutivos si más del 50%; no usar en lluvia continua. Botellas PET transparentes ≤2 L (Eawag‑Sandec, SODIS Manual 2016; sodis.ch). Nota: el manual indica que la guía no aplica más allá de 30° de latitud; SLP está a ~22° N.",
+    "Turbidez ≤30 NTU (prueba: leer un titular a través de la botella); si es mayor, filtrar antes (sodis.ch; Compendium of WASH in Emergencies H.12).",
+    "No apto para agua con contaminación química (OMS)."
+   ],
+   "funcion": "Los rayos UV‑A y el calor del sol inactivan patógenos en agua clara dentro de botellas PET.",
+   "ubicacion": "Azotea",
+   "posicion": [
+    0.25,
+    0.95,
+    0
+   ],
+   "modelo": "models/03.glb",
+   "modelo_disponible": false
+  },
+  {
+   "id": 4,
+   "fase": "USO Y AHORRO",
+   "nombre": "Ahorradores (regadera, aireadores, inodoro bajo consumo)",
+   "num_ecotecnia": 7,
+   "partes": [
+    {
+     "nombre": "Regadera ahorradora",
+     "texto": "Menor caudal con buena presión.",
+     "mesh": "part_regadera"
+    },
+    {
+     "nombre": "Aireador",
+     "texto": "Mezcla aire en la llave y reduce el gasto.",
+     "mesh": "part_aireador"
+    },
+    {
+     "nombre": "Inodoro de bajo consumo",
+     "texto": "Descarga reducida por uso.",
+     "mesh": "part_inodoro"
+    },
+    {
+     "nombre": "Válvula de cierre",
+     "texto": "Corta el agua mientras te enjabonas.",
+     "mesh": "part_válvula"
+    }
+   ],
+   "datos": [
+    "Inodoros: consumo máximo de 6 L por descarga (NOM-009-CONAGUA-2001, numeral 6.11, DOF 2-ago-2001; PDF CONAGUA verificado).",
+    "Regaderas: NOM-008-CONAGUA-1998 fija gasto según presión (baja/media/alta); el DOF documenta casos >10 L/min y un proyecto de modificación (dof.gob.mx nota 5514809). Límite vigente exacto: [POR DEFINIR – confirmar versión vigente].",
+    "Ahorro estimado por hogar: [POR DEFINIR]."
+   ],
+   "funcion": "Dispositivos que reducen el caudal sin perder servicio.",
+   "ubicacion": "Baño/cocina",
+   "posicion": [
+    0.3,
+    0.55,
+    0
+   ],
+   "modelo": "models/04.glb",
+   "modelo_disponible": false
+  },
+  {
+   "id": 5,
+   "fase": "USO Y AHORRO",
+   "nombre": "Lavadero ecológico con reúso de agua gris",
+   "num_ecotecnia": 6,
+   "partes": [
+    {
+     "nombre": "Pileta",
+     "texto": "Zona de lavado.",
+     "mesh": "part_pileta"
+    },
+    {
+     "nombre": "Desagüe separado",
+     "texto": "Conduce el agua gris fuera del drenaje.",
+     "mesh": "part_desagüe"
+    },
+    {
+     "nombre": "Trampa de sólidos/grasas",
+     "texto": "Retiene pelusa y grasa.",
+     "mesh": "part_trampa"
+    },
+    {
+     "nombre": "Depósito de agua gris",
+     "texto": "Almacena para reúso inmediato.",
+     "mesh": "part_depósito"
+    },
+    {
+     "nombre": "Salida a reúso",
+     "texto": "Hacia riego o biofiltro.",
+     "mesh": "part_salida"
+    }
+   ],
+   "datos": [
+    "Usar jabones biodegradables y no almacenar agua gris más de 24 h: [POR DEFINIR – verificar fuente; referencia sugerida OMS 2006 Guías para el uso seguro de aguas residuales, vol. 4]."
+   ],
+   "funcion": "Lavadero que separa el agua jabonosa y la conduce a un depósito para reusarla (riego, WC).",
+   "ubicacion": "Patio",
+   "posicion": [
+    -0.1,
+    0.45,
+    0
+   ],
+   "modelo": "models/05.glb",
+   "modelo_disponible": false
+  },
+  {
+   "id": 6,
+   "fase": "TRATO Y REÚSO",
+   "nombre": "Biofiltro / humedal para aguas grises",
+   "num_ecotecnia": 4,
+   "partes": [
+    {
+     "nombre": "Entrada de agua gris",
+     "texto": "Llega desde lavadero y regadera.",
+     "mesh": "part_entrada"
+    },
+    {
+     "nombre": "Trampa de grasas",
+     "texto": "Pretratamiento.",
+     "mesh": "part_trampa"
+    },
+    {
+     "nombre": "Lecho de grava",
+     "texto": "Medio filtrante.",
+     "mesh": "part_lecho"
+    },
+    {
+     "nombre": "Plantas acuáticas",
+     "texto": "Raíces que alojan microbios depuradores.",
+     "mesh": "part_plantas"
+    },
+    {
+     "nombre": "Impermeabilización",
+     "texto": "Evita infiltrar agua sin tratar.",
+     "mesh": "part_impermeabilización"
+    },
+    {
+     "nombre": "Salida tratada",
+     "texto": "Agua para riego.",
+     "mesh": "part_salida"
+    }
+   ],
+   "datos": [
+    "Fundamentos: SEMARNAT/CONAGUA y IMTA sobre humedales artificiales [POR DEFINIR – citar documento exacto].",
+    "Calidad para reúso: NOM-003-SEMARNAT-1997 (agua residual tratada que se reúsa en servicios al público) como referencia."
+   ],
+   "funcion": "Las aguas grises pasan por grava y raíces de plantas que retienen y degradan contaminantes.",
+   "ubicacion": "Jardín lateral",
+   "posicion": [
+    0.45,
+    0.25,
+    0
+   ],
+   "modelo": "models/06.glb",
+   "modelo_disponible": false
+  },
+  {
+   "id": 7,
+   "fase": "TRATO Y REÚSO",
+   "nombre": "Sanitario seco separador",
+   "num_ecotecnia": 5,
+   "partes": [
+    {
+     "nombre": "Taza separadora",
+     "texto": "Divide orina y heces.",
+     "mesh": "part_taza"
+    },
+    {
+     "nombre": "Cámara de heces",
+     "texto": "Almacena y seca.",
+     "mesh": "part_cámara"
+    },
+    {
+     "nombre": "Material secante",
+     "texto": "Cal, ceniza o aserrín.",
+     "mesh": "part_material"
+    },
+    {
+     "nombre": "Ducto de ventilación",
+     "texto": "Elimina olores.",
+     "mesh": "part_ducto"
+    },
+    {
+     "nombre": "Contenedor de orina",
+     "texto": "Orina para fertilizante diluido.",
+     "mesh": "part_contenedor"
+    }
+   ],
+   "datos": [
+    "Ahorro: no usa agua de descarga (comparar contra 6 L por descarga, NOM-009-CONAGUA-2001).",
+    "Manejo seguro de excretas: OMS 2006, Guías vol. 4.",
+    "Tiempo de almacenamiento recomendado: [POR DEFINIR]."
+   ],
+   "funcion": "Separa orina y heces sin usar agua; las heces se secan con material secante y se compostan.",
+   "ubicacion": "Anexo/baño",
+   "posicion": [
+    -0.45,
+    0.15,
+    0
+   ],
+   "modelo": "models/07.glb",
+   "modelo_disponible": false
+  },
+  {
+   "id": 8,
+   "fase": "DEVUELVO AL SUELO",
+   "nombre": "Riego por goteo / ollas de barro",
+   "num_ecotecnia": 8,
+   "partes": [
+    {
+     "nombre": "Depósito elevado",
+     "texto": "Da presión por gravedad.",
+     "mesh": "part_depósito"
+    },
+    {
+     "nombre": "Filtro de malla",
+     "texto": "Evita taponamientos.",
+     "mesh": "part_filtro"
+    },
+    {
+     "nombre": "Manguera/cintilla",
+     "texto": "Distribuye el agua.",
+     "mesh": "part_manguera/cintilla"
+    },
+    {
+     "nombre": "Gotero",
+     "texto": "Libera gotas en la raíz.",
+     "mesh": "part_gotero"
+    },
+    {
+     "nombre": "Olla de barro enterrada",
+     "texto": "Rezuma agua a través del barro poroso.",
+     "mesh": "part_olla"
+    },
+    {
+     "nombre": "Planta",
+     "texto": "Recibe agua sin desperdicio.",
+     "mesh": "part_planta"
+    }
+   ],
+   "datos": [
+    "Eficiencia de riego por goteo vs. gravedad: [POR DEFINIR – citar CONAGUA/IMTA].",
+    "Ollas de barro: técnica tradicional; ahorro cuantificado [POR DEFINIR – fuente académica]."
+   ],
+   "funcion": "Entrega el agua directo a la raíz, gota a gota o por infiltración desde ollas enterradas.",
+   "ubicacion": "Huerto/patio",
+   "posicion": [
+    0.6,
+    0.05,
+    0
+   ],
+   "modelo": "models/08.glb",
+   "modelo_disponible": false
+  }
+ ]
+}
