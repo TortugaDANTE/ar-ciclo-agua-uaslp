@@ -1,0 +1,16 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Visor 3D · El ciclo del agua en mi casa</title><link rel="stylesheet" href="css/estilos.css">
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+<style>main{padding:56px 12px 12px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}.grid button{width:100%;margin:0}model-viewer{width:100%;height:45vh;background:#EDF2F7;border-radius:8px}</style></head><body>
+<div class="barra"><span>Visor 3D (sin cámara)</span><img src="assets/logos/logo_aa.svg" alt="Agenda Ambiental UASLP"></div>
+<main><p id="txtIntro"></p><div class="grid" id="lista"></div><h3 id="tit"></h3>
+<model-viewer id="mv" camera-controls auto-rotate ar ar-modes="webxr scene-viewer quick-look" alt="Modelo 3D"></model-viewer>
+<p class="aviso" id="nota"></p><p class="aviso">Contacto Agenda Ambiental UASLP: ext. 7200 y 7210 · <a href="index.html">Volver a RA</a></p></main>
+<div id="panel" class="panel oculto"></div>
+<script src="js/app.js"></script><script>
+cargarContenido().then(C=>{$('#txtIntro').textContent=C.intro;
+ const ver=id=>{const e=C.estaciones[id-1];$('#tit').textContent=e.id+'. '+e.nombre;
+  if(e.modelo_disponible){$('#mv').src=e.modelo;$('#nota').textContent=''}else{$('#mv').removeAttribute('src');$('#nota').textContent='⚠ PROVISIONAL: el modelo GLB de esta estación aún no existe ('+e.modelo+').'}
+  panelEstacion(e,C.estaciones.length,()=>ver(id+1),()=>$('#panel').classList.add('oculto'));};
+ C.estaciones.forEach(e=>{const b=document.createElement('button');b.textContent=e.id+'. '+e.nombre;b.onclick=()=>ver(e.id);$('#lista').appendChild(b)});});
+</script></body></html>

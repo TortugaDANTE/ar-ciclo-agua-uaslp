@@ -1,0 +1,26 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>El ciclo del agua en mi casa · Agenda Ambiental UASLP</title><link rel="stylesheet" href="css/estilos.css">
+<script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script></head><body>
+<div id="splash" class="capa"><div class="logos"><img src="assets/logos/logo_uaslp_corner.svg" alt="UASLP"><img src="assets/logos/logo_aa.svg" alt="Agenda Ambiental UASLP"></div></div>
+<div id="intro" class="capa oculto"><h1>El ciclo del agua en mi casa</h1><p id="txtIntro"></p>
+<p><b>Capto → Potabilizo → Uso y ahorro → Trato y reúso → Devuelvo al suelo</b></p>
+<button id="bIniciar">Iniciar cámara y apuntar al cartel</button><button onclick="location.href='visor.html'">Ver sin cámara</button>
+<p class="aviso">Contacto Agenda Ambiental UASLP: ext. 7200 y 7210</p></div>
+<div class="barra"><span>El ciclo del agua en mi casa</span><span><button style="padding:4px 8px;margin:0" onclick="panelInfo()">ℹ</button></span></div>
+<div id="panel" class="panel oculto"></div>
+<a-scene id="escena" mindar-image="imageTargetSrc: targets/cartel.mind; autoStart: false; uiScanning: yes" color-space="sRGB" renderer="colorManagement: true" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+ <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse" raycaster="objects: .clicable"></a-camera>
+ <a-entity id="raiz" mindar-image-target="targetIndex: 0"><a-entity id="modelo"></a-entity></a-entity></a-scene>
+<script src="js/app.js"></script><script src="js/hotspots.js"></script>
+<script>
+setTimeout(()=>{$('#splash').classList.add('oculto');$('#intro').classList.remove('oculto')},1500);
+cargarContenido().then(c=>$('#txtIntro').textContent=c.intro);
+const sc=document.querySelector('#escena');
+sc.addEventListener('loaded',construir);
+$('#bIniciar').onclick=async()=>{$('#intro').classList.add('oculto');
+  try{await sc.systems['mindar-image-system'].start();}catch(e){location.href='visor.html';return}
+  let ok=false;document.querySelector('#raiz').addEventListener('targetFound',()=>ok=true);
+  setTimeout(()=>{if(!ok&&confirm('No se detecta el cartel. ¿Abrir el visor sin cámara?'))location.href='visor.html'},10000);};
+sc.addEventListener('arError',()=>location.href='visor.html');
+</script></body></html>
