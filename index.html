@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>El ciclo del agua en mi casa · Agenda Ambiental UASLP</title><link rel="stylesheet" href="css/estilos.css?v=20261026a"><style>.a-canvas{touch-action:none}.mindar-ui-overlay{pointer-events:none}#dbg{pointer-events:none}
+<title>El ciclo del agua en mi casa · Agenda Ambiental UASLP</title><link rel="stylesheet" href="css/estilos.css?v=20261026b"><style>.a-canvas{touch-action:none}.mindar-ui-overlay{pointer-events:none}#dbg{pointer-events:none}
 .idlogos{display:flex;align-items:center;gap:8px}.barra .idlogos img{height:28px;background:none;border-radius:0;padding:0}.barra .tit{flex:1;text-align:center;font-size:clamp(11px,3.2vw,13px)}
 .a-enter-vr{top:auto!important;bottom:86px!important;right:8px!important;left:auto!important}
 #barraAR{position:fixed;left:0;right:0;bottom:22px;z-index:26;display:none;gap:8px;justify-content:center;padding:0 8px;pointer-events:auto}
@@ -7,13 +7,13 @@
 #barraAR button#bExp{background:#E66A2C}
 #bModo{position:fixed;top:48px;left:8px;z-index:26;min-width:48px;min-height:48px;border-radius:24px;margin:0;padding:0 12px;
  background:rgba(0,59,113,.55);border:2px solid rgba(90,224,240,.9);box-shadow:0 0 14px rgba(90,224,240,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-size:clamp(12px,3.4vw,14px)}
-#barraZoom{position:fixed;left:8px;right:64px;bottom:78px;z-index:26;display:none;gap:6px;justify-content:center;flex-wrap:wrap;pointer-events:auto}
+#barraZoom{display:none}#barraZoom .zg{position:fixed;right:8px;z-index:26;pointer-events:auto}#zgI{top:48px}#zgM{bottom:78px}
 #barraZoom .zg{display:flex;align-items:center;gap:4px;background:rgba(0,59,113,.6);border:2px solid rgba(90,224,240,.9);border-radius:24px;padding:2px 6px;color:#fff;font-size:clamp(10px,2.9vw,12px);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 #barraZoom svg{width:18px;height:18px;flex:none}
 #barraZoom button{min-width:40px;min-height:40px;margin:0;padding:0;border-radius:20px;font-size:22px;font-weight:700;line-height:1;background:rgba(0,59,113,.9);border:2px solid #5AE0F0}</style>
 <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-<script src="js/experiencia.js?v=20261026a"></script>
+<script src="js/experiencia.js?v=20261026b"></script>
 <script>/* MindAR fija camera.projectionMatrix pero no su inversa; el raycaster (toques) usa la inversa. */
 AFRAME.registerComponent('fix-raycast-mindar',{tick(){const c=this.el.sceneEl.camera;if(c)c.projectionMatrixInverse.copy(c.projectionMatrix).invert();}});</script></head><body>
 <div id="splash" class="capa"><div class="logos"><img src="assets/logos/logo_uaslp_corner.svg" alt="UASLP"><img src="assets/logos/logo_aa.svg" alt="Agenda Ambiental UASLP"></div></div>
@@ -24,13 +24,13 @@ AFRAME.registerComponent('fix-raycast-mindar',{tick(){const c=this.el.sceneEl.ca
 <div class="barra"><span class="idlogos"><img src="assets/logos/logo_uaslp_blanco.svg" alt="UASLP"><img src="assets/logos/logo_aa_blanco.svg" alt="Agenda Ambiental UASLP"></span><span class="tit">El ciclo del agua en mi casa</span><button style="padding:4px 10px;margin:0" onclick="panelInfo()">ℹ</button></div>
 <div id="panel" class="panel oculto"></div>
 <button id="bModo">Modo: Auto</button>
-<div id="barraZoom"><span class="zg"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6.5" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M15 15l6 6" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg><span>Infografía</span><button id="zIi" aria-label="Acercar infografía">+</button><button id="zIo" aria-label="Alejar infografía">−</button></span><span class="zg"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6.5" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M15 15l6 6" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg><span>Modelo</span><button id="zMi" aria-label="Acercar modelo">+</button><button id="zMo" aria-label="Alejar modelo">−</button></span></div>
+<div id="barraZoom"><span class="zg" id="zgI"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6.5" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M15 15l6 6" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg><span>Infografía</span><button id="zIi" aria-label="Acercar infografía">+</button><button id="zIo" aria-label="Alejar infografía">−</button></span><span class="zg" id="zgM"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6.5" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M15 15l6 6" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg><span>Modelo</span><button id="zMi" aria-label="Acercar modelo">+</button><button id="zMo" aria-label="Alejar modelo">−</button></span></div>
 <div id="barraAR"><button id="bExp">Ver componentes</button><button id="bSig">Siguiente</button><button id="bMenu">Menú</button></div>
 <a-scene id="escena" mindar-image="autoStart: false; uiScanning: yes" color-space="sRGB" renderer="colorManagement: true; antialias: true" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
  <a-entity light="type: ambient; intensity: 0.9"></a-entity><a-entity light="type: directional; intensity: 0.8" position="0.5 1 1"></a-entity>
  <a-camera fix-raycast-mindar position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse" raycaster="objects: .clicable; far: 100000; interval: 0"></a-camera>
  <a-entity mindar-image-target="targetIndex: 0"><a-entity id="orient"><a-entity experiencia="tamModelo: 0.6; radio: 0.35; lift: 0.06; sepEtq: 0.05; estZ: 0.2; cardY: 0.5; yExtra: -0.64; botones3D: false; altoMax: 0.45; etqMax: 0.42" position="0 0 0.1" scale="2.6 2.6 2.6"></a-entity></a-entity></a-entity></a-scene>
-<script src="js/app.js?v=20261026a"></script>
+<script src="js/app.js?v=20261026b"></script>
 <script>
 setTimeout(()=>{$('#splash').classList.add('oculto');$('#intro').classList.remove('oculto')},1500);
 cargarContenido().then(c=>$('#txtIntro').textContent=c.intro);
