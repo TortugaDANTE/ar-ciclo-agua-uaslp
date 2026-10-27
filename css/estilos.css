@@ -11,3 +11,9 @@ h1{color:var(--azul);font-size:clamp(20px,6vw,30px);margin:.4em 0}p{font-size:cl
 .barra img{height:26px;background:#fff;border-radius:4px;padding:2px}.aviso{font-size:clamp(10px,2.8vw,11px);color:var(--gris)}
 
 @media (max-height:700px){.capa{padding:14px}.capa p{margin:.5em 0}}
+/* Controles de zoom (lupa + −): Infografía arriba-derecha, Modelo abajo-izquierda */
+.zg{position:fixed;z-index:26;display:none;align-items:center;gap:4px;background:rgba(0,59,113,.6);border:2px solid rgba(90,224,240,.9);border-radius:24px;padding:2px 6px;color:#fff;font-size:clamp(10px,2.9vw,12px);line-height:1;pointer-events:auto;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.zg.on{display:flex}.zg svg{width:18px;height:18px;flex:none}
+.zg button{min-width:40px;min-height:40px;margin:0;padding:0;border-radius:20px;font-size:22px;font-weight:700;line-height:1;background:rgba(0,59,113,.9);border:2px solid #5AE0F0;color:#fff}
+#zgI{top:var(--zTop,48px);right:8px;left:auto;bottom:auto}
+#zgM{bottom:var(--zBot,78px);left:8px;right:auto;top:auto}
